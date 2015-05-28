@@ -20,16 +20,26 @@ class WC_Email_Customer_Ekomi extends WC_Email {
    */
   function __construct() {
 
-    $this->id         = 'customer_ekomi';
-    $this->title       = __( 'eKomi Review Reminder', 'woocommerce-ekomi' );
+    $this->id             = 'customer_ekomi';
+    $this->title          = __( 'eKomi Review Reminder', 'woocommerce-ekomi' );
     $this->description    = __( 'This E-Mail is being sent to a customer to transfer eKomi order review link to a customer.', 'woocommerce-ekomi' );
 
-    $this->heading       = __( 'Please rate your Order', 'woocommerce-ekomi' );
+    $this->heading        = __( 'Please rate your Order', 'woocommerce-ekomi' );
     $this->subject        = __( 'Please rate your {site_title} order from {order_date}', 'woocommerce-ekomi' );
 
-    $this->template_html   = 'emails/customer-ekomi.php';
-    $this->template_plain   = 'emails/plain/customer-ekomi.php';
+    $dir = plugin_dir_path( __FILE__ );
+    $this->template_base  = $dir . '/templates/';
 
+    $this->template_html  = 'emails/customer-ekomi.php';
+    $this->template_plain = 'emails/plain/customer-ekomi.php';
+
+
+
+    $this->message =  sprintf( __( 'Dear %s %s,', 'woocommerce-ekomi' ), $order->billing_first_name, $order->billing_last_name )
+                      . PHP_EOL . PHP_EOL
+                      . sprintf( __( 'You have recently shopped at %s. Thank you! We would be glad if you spent some time to write a review about your order. To do so please follow follow the link.', 'woocommerce-ekomi' ), get_bloginfo( 'name' ) );
+
+    $this->review_message = $this->get_option( 'review_message', $this->message );
 
     // Triggers for this email
     add_action( 'woocommerce_ekomi_review_notification', array( $this, 'trigger' ) );
@@ -124,6 +134,13 @@ class WC_Email_Customer_Ekomi extends WC_Email {
               'description' => sprintf( __( 'This controls the main heading contained within the email notification. Leave blank to use the default heading: <code>%s</code>.', 'woocommerce-ekomi'), $this->heading ),
               'placeholder' => '',
               'default'     => ''
+          ),
+          'review_message' => array(
+              'title'      => 'Email Message',
+              'type'      => 'textarea',
+              'description' => sprintf( __( 'This controls the message content. Leave blank to use the default heading: <code>%s</code>.', 'woocommerce-ekomi'), $this->message ),
+              'placeholder' => '',
+              'default' => ''
           ),
           'email_type' => array(
               'title'       => 'Email type',

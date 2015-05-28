@@ -207,12 +207,10 @@ class WC_Integration_eKomi_Integration extends WC_Integration {
           $product_ids[] = ( empty( $item[ 'variation_id' ] ) ? $item[ 'product_id' ] : $item[ 'variation_id' ] );
         }
       }
-      // $response = unserialize( file_get_contents(
-      //   'https://api.ekomi.de/v3/putOrder?auth=' . $this->interface_id . '|' . $this->interface_password . '&version=' . $this->version_ekomi . '&order_id=' . urlencode( esc_attr( $order->id ) ) . '&product_ids=' . urlencode( esc_attr( implode( ',', $product_ids ) ) )
-      // ) );
       $response = unserialize( file_get_contents(
-        'http://test.soportewordpress.net/wp-content/plugins/woocommerce-ekomi/write.php?call=PUT_ORDER'
+        'https://api.ekomi.de/v3/putOrder?auth=' . $this->interface_id . '|' . $this->interface_password . '&version=' . $this->version_ekomi . '&order_id=' . urlencode( esc_attr( $order->id ) ) . '&product_ids=' . urlencode( esc_attr( implode( ',', $product_ids ) ) )
       ) );
+
 
       if ( $response['done'] == 1 && isset( $response['link'] ) )
         update_post_meta( $order->id, '_ekomi_review_link', $response[ 'link' ] );
